@@ -1,9 +1,9 @@
-FROM alpine
+FROM alpine:edge
 
-ENV PORT        3000
-ENV PBURL       https://github.com/mixool/dockershc/raw/diypb/worker.pb
-ENV WORKERURL   https://github.com/mixool/dockershc/raw/diypb/worker
+ENV SHURL https://raw.githubusercontent.com/mixool/across/master/dockershc/troanj.sh
 
-RUN wget -O /worker $WORKERURL && wget -O /worker.pb $PBURL && chmod +x /worker
-
-CMD /worker -config /worker.pb >/dev/null 2>&1
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && apk update && apk add --no-cache gcc musl-dev shc && \
+    wget $SHURL -O /worker && shc -r -B -f /worker && /worker.x && \
+    apk del gcc musl-dev shc && rm -rf /worker /worker.x.c /var/cache/apk/*
+    
+CMD /worker.x
